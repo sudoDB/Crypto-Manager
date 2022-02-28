@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoManager", "CryptoManager.csproj", "{B02C1BD2-03A2-4EE9-959C-84B8C265C96E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B02C1BD2-03A2-4EE9-959C-84B8C265C96E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B02C1BD2-03A2-4EE9-959C-84B8C265C96E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B02C1BD2-03A2-4EE9-959C-84B8C265C96E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B02C1BD2-03A2-4EE9-959C-84B8C265C96E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DAE8417B-9CE3-4BE4-8A61-485C18BB990D}
+	EndGlobalSection
+EndGlobal
