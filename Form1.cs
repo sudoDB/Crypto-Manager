@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using System.Globalization;
+using System.Threading;
 
 namespace CryptoManager
 {
@@ -28,8 +30,9 @@ namespace CryptoManager
         {
             public string Token { get; set; }
             public string Wallet { get; set; }
-            public int Value { get; set; }
-            public int Price { get; set; }
+            public float TotalValue { get; set; }
+            public float TotalPrice { get; set; }
+            public float PricePerToken { get; set; }
         }
 
         // Create the colums and add the content
@@ -38,10 +41,11 @@ namespace CryptoManager
 
             // Set columns
             walletContentListView.View = View.Details;
-            walletContentListView.Columns.Add("TokenName");
-            walletContentListView.Columns.Add("ValueToken");
-            walletContentListView.Columns.Add("ValueMoney");
             walletContentListView.Columns.Add("Wallet");
+            walletContentListView.Columns.Add("Token Name");
+            walletContentListView.Columns.Add("Token(s)");
+            walletContentListView.Columns.Add("Value");
+            walletContentListView.Columns.Add("PPT");
 
             // Get data
             /*
@@ -57,7 +61,8 @@ namespace CryptoManager
                     walletContentListView.Items.Add(new ListViewItem(items));
                 }
             }*/
-            RefreshWalletListView();
+            RefreshWalletListView(); 
+            RefreshLabelsContent();
 
             // Auto-size the columns
             for (int i = 0; i < walletContentListView.Columns.Count; i++)
@@ -81,7 +86,7 @@ namespace CryptoManager
                 dynamic dynJson = JsonConvert.DeserializeObject(jsonString);
                 foreach (var item in dynJson)
                 {
-                    string[] items = { item.Wallet, item.Token, item.Value.ToString(), item.Price.ToString() };
+                    string[] items = { item.Wallet, item.Token, item.TotalValue.ToString(), item.TotalPrice.ToString(), item.PricePerToken.ToString() };
                     walletContentListView.Items.Add(new ListViewItem(items));
                 }
             }
@@ -93,6 +98,19 @@ namespace CryptoManager
             Console.Write("Column Resizing");
             e.NewWidth = this.walletContentListView.Columns[e.ColumnIndex].Width;
             e.Cancel = true;
+        }
+
+        // Refresh labels
+        private void RefreshLabelsContent()
+        {
+            string jsonString = File.ReadAllText(".\\data\\" + "wallet" + ".json");
+            dynamic dynJson = JsonConvert.DeserializeObject(jsonString);
+            float total = 0.0f;
+            foreach (var item in dynJson)
+            {
+                total += float.Parse(item.TotalPrice.ToString("####0.00"));
+            }
+            TotalBuyLabel.Text = $"Total spent:\t{total}";
         }
 
         private void buyPriceLabel_Click(object sender, EventArgs e)
@@ -134,11 +152,16 @@ namespace CryptoManager
                             // Create a new entry
                             Console.WriteLine("And in the same wallet");
                             //json = File.ReadAllText(path);
-                            json = json.Replace($"{item.Value}", $"{item.Value + int.Parse(buyValueInput.Text)}");
-                            json = json.Replace($"{item.Price}", $"{item.Price + int.Parse(buyPriceInput.Text)}");
+                            float v = float.Parse(buyValueInput.Text, CultureInfo.InvariantCulture);
+                            float p = float.Parse(buyPriceInput.Text, CultureInfo.InvariantCulture);
 
-                            Console.WriteLine($"{item.Value + int.Parse(buyValueInput.Text)}");
-                            Console.WriteLine($"{item.Price + int.Parse(buyPriceInput.Text)}");
+                            json = json.Replace($"{item.TotalValue}", $"{item.TotalValue + v}");
+                            json = json.Replace($"{item.TotalPrice}", $"{item.TotalPrice + p}");
+                            json = json.Replace($"{item.PricePerToken}", $"{(p / v).ToString("####0.00")}");
+
+                            Console.WriteLine($"{item.TotalValue + v}");
+                            Console.WriteLine($"{item.TotalPrice + p}");
+                            Console.WriteLine($"{item.PricePerToken}", $"{(p / v).ToString("####0.00")}");
                             //File.WriteAllText(path, text);
                             addedToExistentEntry = true;
                             break;
@@ -151,12 +174,17 @@ namespace CryptoManager
                 {
                     // Create a new entry
                     Console.WriteLine("New Entry");
+                    float v = float.Parse(buyValueInput.Text, CultureInfo.InvariantCulture);
+                    float p = float.Parse(buyPriceInput.Text, CultureInfo.InvariantCulture);
+                    float ppt = p / v;
+
                     walletContent.Add(new WalletContent()
                     {
                         Token = TokenTypeList.SelectedItem.ToString(),
                         Wallet = walletListBox.SelectedItem.ToString(),
-                        Value = int.Parse(buyValueInput.Text),
-                        Price = int.Parse(buyPriceInput.Text)
+                        TotalValue = v,
+                        TotalPrice = p,
+                        PricePerToken = float.Parse(ppt.ToString("####0.00"))
                     });
                     json = JsonConvert.SerializeObject(walletContent);
                 }
@@ -185,8 +213,9 @@ namespace CryptoManager
         {
             if (!Regex.IsMatch(buyPriceInput.Text, @"^[0-9]*(?:\.[0-9]*)?$"))
             {
-                MessageBox.Show("Format: 99.99", "Please enter only numbers.");
-                buyPriceInput.Text = buyPriceInput.Text.Remove(buyPriceInput.Text.Length - 1);
+                //MessageBox.Show("Format: 99.99", "Please enter only numbers.");
+                //buyPriceInput.Text = buyPriceInput.Text.Remove(buyPriceInput.Text.Length - 1);
+                buyPriceInput.Text = buyPriceInput.Text.Replace(',', '.');
             }
         }
 
@@ -199,8 +228,9 @@ namespace CryptoManager
         {
             if (!Regex.IsMatch(buyValueInput.Text, @"^[0-9]*(?:\.[0-9]*)?$"))
             {
-                MessageBox.Show("Format: 99.99", "Please enter only numbers.");
-                buyValueInput.Text = buyValueInput.Text.Remove(buyValueInput.Text.Length - 1);
+                //MessageBox.Show("Format: 99.99", "Please enter only numbers.");
+                //buyValueInput.Text = buyValueInput.Text.Remove(buyValueInput.Text.Length - 1);
+                buyValueInput.Text = buyValueInput.Text.Replace(',', '.');
             }
         }
 
@@ -214,37 +244,44 @@ namespace CryptoManager
             // Security
             if (editionBoxButton.Checked)
             {
-                //Delete from the view
-                /*
-                var s = walletContentListView.SelectedItems[0];
-                walletContentListView.Items.Remove(s);*/
-
-                var path = ".\\data\\" + "wallet" + ".json";
-
-                //Register whats already inside wallet file
-                var json = File.ReadAllText(path);
-                var walletContent = JsonConvert.DeserializeObject<List<WalletContent>>(json);
-
-                var toDel = $"{walletContentListView.SelectedItems[0].SubItems[0].Text}--{walletContentListView.SelectedItems[0].SubItems[1].Text}";
-                Console.WriteLine($"Del target {toDel}");
-                for (int i=0; i<walletContent.Count; i++)
+                if (walletContentListView.SelectedItems.Count != 0)
                 {
-                    var line = $"{walletContent[i].Wallet}--{walletContent[i].Token}";
-                    Console.WriteLine(line);
-                    
-                    if (line == toDel)
+                    //Delete from the view
+                    /*
+                    var s = walletContentListView.SelectedItems[0];
+                    walletContentListView.Items.Remove(s);*/
+
+                    var path = ".\\data\\" + "wallet" + ".json";
+
+                    //Register whats already inside wallet file
+                    var json = File.ReadAllText(path);
+                    var walletContent = JsonConvert.DeserializeObject<List<WalletContent>>(json);
+
+                    var toDel = $"{walletContentListView.SelectedItems[0].SubItems[0].Text}--{walletContentListView.SelectedItems[0].SubItems[1].Text}";
+                    Console.WriteLine($"Del target {toDel}");
+                    for (int i = 0; i < walletContent.Count; i++)
                     {
-                        Console.WriteLine($"Should delete {line}");
-                        walletContent.RemoveAt(i);
+                        var line = $"{walletContent[i].Wallet}--{walletContent[i].Token}";
+                        Console.WriteLine(line);
 
+                        if (line == toDel)
+                        {
+                            Console.WriteLine($"Should delete {line}");
+                            walletContent.RemoveAt(i);
+
+                        }
                     }
+
+                    json = JsonConvert.SerializeObject(walletContent);
+                    // Write it outside the loop to avoid opening the file 2x
+                    File.WriteAllText(path, json);
+
+
                 }
-
-                json = JsonConvert.SerializeObject(walletContent);
-                // Write it outside the loop to avoid opening the file 2x
-                File.WriteAllText(path, json);
-
-                
+                else
+                {
+                    MessageBox.Show("No entry selected");
+                }
             }
             else
             {
@@ -252,6 +289,7 @@ namespace CryptoManager
             }
 
             RefreshWalletListView();
+            RefreshLabelsContent();
         }
     }
 }

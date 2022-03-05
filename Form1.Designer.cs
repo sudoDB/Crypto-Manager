@@ -41,6 +41,7 @@
             this.deleteButton = new System.Windows.Forms.Button();
             this.modifyButton = new System.Windows.Forms.Button();
             this.editionBoxButton = new System.Windows.Forms.CheckBox();
+            this.TotalBuyLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // walletContentListView
@@ -50,14 +51,14 @@
             this.walletContentListView.Location = new System.Drawing.Point(12, 12);
             this.walletContentListView.MultiSelect = false;
             this.walletContentListView.Name = "walletContentListView";
-            this.walletContentListView.Size = new System.Drawing.Size(303, 403);
+            this.walletContentListView.Size = new System.Drawing.Size(384, 403);
             this.walletContentListView.TabIndex = 0;
             this.walletContentListView.UseCompatibleStateImageBehavior = false;
             this.walletContentListView.SelectedIndexChanged += new System.EventHandler(this.walletContentListView_SelectedIndexChanged);
             // 
             // BuyButton
             // 
-            this.BuyButton.Location = new System.Drawing.Point(440, 99);
+            this.BuyButton.Location = new System.Drawing.Point(524, 97);
             this.BuyButton.Name = "BuyButton";
             this.BuyButton.Size = new System.Drawing.Size(230, 23);
             this.BuyButton.TabIndex = 2;
@@ -68,7 +69,7 @@
             // 
             // buyPriceInput
             // 
-            this.buyPriceInput.Location = new System.Drawing.Point(558, 39);
+            this.buyPriceInput.Location = new System.Drawing.Point(642, 37);
             this.buyPriceInput.Name = "buyPriceInput";
             this.buyPriceInput.Size = new System.Drawing.Size(112, 23);
             this.buyPriceInput.TabIndex = 3;
@@ -78,7 +79,7 @@
             // buyPriceLabel
             // 
             this.buyPriceLabel.AutoSize = true;
-            this.buyPriceLabel.Location = new System.Drawing.Point(555, 19);
+            this.buyPriceLabel.Location = new System.Drawing.Point(639, 17);
             this.buyPriceLabel.Name = "buyPriceLabel";
             this.buyPriceLabel.Size = new System.Drawing.Size(66, 13);
             this.buyPriceLabel.TabIndex = 4;
@@ -87,7 +88,7 @@
             // 
             // buyValueInput
             // 
-            this.buyValueInput.Location = new System.Drawing.Point(440, 39);
+            this.buyValueInput.Location = new System.Drawing.Point(524, 37);
             this.buyValueInput.Name = "buyValueInput";
             this.buyValueInput.Size = new System.Drawing.Size(112, 23);
             this.buyValueInput.TabIndex = 5;
@@ -97,7 +98,7 @@
             // buyValueLabel
             // 
             this.buyValueLabel.AutoSize = true;
-            this.buyValueLabel.Location = new System.Drawing.Point(437, 19);
+            this.buyValueLabel.Location = new System.Drawing.Point(521, 17);
             this.buyValueLabel.Name = "buyValueLabel";
             this.buyValueLabel.Size = new System.Drawing.Size(70, 13);
             this.buyValueLabel.TabIndex = 6;
@@ -125,16 +126,16 @@
             "XMR",
             "XRP",
             "XTZ"});
-            this.TokenTypeList.Location = new System.Drawing.Point(321, 37);
+            this.TokenTypeList.Location = new System.Drawing.Point(405, 35);
             this.TokenTypeList.Name = "TokenTypeList";
-            this.TokenTypeList.Size = new System.Drawing.Size(113, 56);
+            this.TokenTypeList.Size = new System.Drawing.Size(113, 82);
             this.TokenTypeList.Sorted = true;
             this.TokenTypeList.TabIndex = 7;
             // 
             // TokenTypeLabel
             // 
             this.TokenTypeLabel.AutoSize = true;
-            this.TokenTypeLabel.Location = new System.Drawing.Point(318, 19);
+            this.TokenTypeLabel.Location = new System.Drawing.Point(402, 17);
             this.TokenTypeLabel.Name = "TokenTypeLabel";
             this.TokenTypeLabel.Size = new System.Drawing.Size(38, 13);
             this.TokenTypeLabel.TabIndex = 8;
@@ -143,7 +144,7 @@
             // walletListLabel
             // 
             this.walletListLabel.AutoSize = true;
-            this.walletListLabel.Location = new System.Drawing.Point(673, 19);
+            this.walletListLabel.Location = new System.Drawing.Point(757, 17);
             this.walletListLabel.Name = "walletListLabel";
             this.walletListLabel.Size = new System.Drawing.Size(37, 13);
             this.walletListLabel.TabIndex = 9;
@@ -157,17 +158,17 @@
             "MoneroGUI",
             "Bitpanda",
             "AgoraDesk",
-            ""});
-            this.walletListBox.Location = new System.Drawing.Point(676, 39);
+            "Metamask"});
+            this.walletListBox.Location = new System.Drawing.Point(760, 37);
             this.walletListBox.Name = "walletListBox";
-            this.walletListBox.Size = new System.Drawing.Size(112, 56);
+            this.walletListBox.Size = new System.Drawing.Size(112, 82);
             this.walletListBox.TabIndex = 10;
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(12, 415);
+            this.deleteButton.Location = new System.Drawing.Point(10, 419);
             this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(151, 23);
+            this.deleteButton.Size = new System.Drawing.Size(194, 23);
             this.deleteButton.TabIndex = 11;
             this.deleteButton.Text = "Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
@@ -175,9 +176,9 @@
             // 
             // modifyButton
             // 
-            this.modifyButton.Location = new System.Drawing.Point(164, 415);
+            this.modifyButton.Location = new System.Drawing.Point(204, 419);
             this.modifyButton.Name = "modifyButton";
-            this.modifyButton.Size = new System.Drawing.Size(151, 23);
+            this.modifyButton.Size = new System.Drawing.Size(192, 23);
             this.modifyButton.TabIndex = 12;
             this.modifyButton.Text = "Modify";
             this.modifyButton.UseVisualStyleBackColor = true;
@@ -185,18 +186,28 @@
             // editionBoxButton
             // 
             this.editionBoxButton.AutoSize = true;
-            this.editionBoxButton.Location = new System.Drawing.Point(321, 419);
+            this.editionBoxButton.Location = new System.Drawing.Point(405, 423);
             this.editionBoxButton.Name = "editionBoxButton";
             this.editionBoxButton.Size = new System.Drawing.Size(87, 17);
             this.editionBoxButton.TabIndex = 13;
             this.editionBoxButton.Text = "Edition mode";
             this.editionBoxButton.UseVisualStyleBackColor = true;
             // 
+            // TotalBuyLabel
+            // 
+            this.TotalBuyLabel.AutoSize = true;
+            this.TotalBuyLabel.Location = new System.Drawing.Point(405, 250);
+            this.TotalBuyLabel.Name = "TotalBuyLabel";
+            this.TotalBuyLabel.Size = new System.Drawing.Size(62, 13);
+            this.TotalBuyLabel.TabIndex = 14;
+            this.TotalBuyLabel.Text = "Total Spent";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(884, 461);
+            this.Controls.Add(this.TotalBuyLabel);
             this.Controls.Add(this.editionBoxButton);
             this.Controls.Add(this.modifyButton);
             this.Controls.Add(this.deleteButton);
@@ -232,6 +243,7 @@
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button modifyButton;
         private System.Windows.Forms.CheckBox editionBoxButton;
+        private System.Windows.Forms.Label TotalBuyLabel;
     }
 }
 
