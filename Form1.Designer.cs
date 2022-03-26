@@ -54,7 +54,6 @@
             this.walletContentListView.Size = new System.Drawing.Size(384, 403);
             this.walletContentListView.TabIndex = 0;
             this.walletContentListView.UseCompatibleStateImageBehavior = false;
-            this.walletContentListView.SelectedIndexChanged += new System.EventHandler(this.walletContentListView_SelectedIndexChanged);
             // 
             // BuyButton
             // 
@@ -84,7 +83,6 @@
             this.buyPriceLabel.Size = new System.Drawing.Size(66, 13);
             this.buyPriceLabel.TabIndex = 4;
             this.buyPriceLabel.Text = "Buy price (€)";
-            this.buyPriceLabel.Click += new System.EventHandler(this.buyPriceLabel_Click);
             // 
             // buyValueInput
             // 
@@ -103,7 +101,6 @@
             this.buyValueLabel.Size = new System.Drawing.Size(70, 13);
             this.buyValueLabel.TabIndex = 6;
             this.buyValueLabel.Text = "Value (token)";
-            this.buyValueLabel.Click += new System.EventHandler(this.buyValueLabel_Click);
             // 
             // TokenTypeList
             // 

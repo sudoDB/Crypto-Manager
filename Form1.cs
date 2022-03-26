@@ -1,17 +1,14 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Net;
+using System.Web;
+using CoinMarketCap;
+using CoinMarketCap.Models.Cryptocurrency;
 using System.Threading;
 
 namespace CryptoManager
@@ -20,10 +17,15 @@ namespace CryptoManager
     public partial class Form1 : Form
     {
 
+        private static string API_KEY = File.ReadAllText("./data/API-Key.txt"); // CoinMLarketCap
+
         public Form1()
         {
             InitializeComponent();
             LoadWalletListView();
+
+            // Get crypto price from CoinMarketCap
+            GetCryptoPrice();
         }
 
         public class WalletContent
@@ -47,20 +49,7 @@ namespace CryptoManager
             walletContentListView.Columns.Add("Value");
             walletContentListView.Columns.Add("PPT");
 
-            // Get data
-            /*
-            var fileNames = Directory.GetFiles(".\\data\\");
-            foreach (var fileName in fileNames)
-            {
-                string[] data = File.ReadAllLines(fileName).ToArray();
-                foreach (string d in data)
-                {
-                    Console.WriteLine(d);
-                    string[] items = d.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    walletContentListView.Items.Add(new ListViewItem(items));
-                }
-            }*/
+            // refresh contents
             RefreshWalletListView(); 
             RefreshLabelsContent();
 
@@ -72,6 +61,9 @@ namespace CryptoManager
 
             // Prevent resize
             this.walletContentListView.ColumnWidthChanging += new ColumnWidthChangingEventHandler(walletContentListView_ColumnWidthChanging);
+
+            // Sorting by wallet name
+            walletContentListView.Sorting = SortOrder.Ascending;
 
         }
 
@@ -113,9 +105,58 @@ namespace CryptoManager
             TotalBuyLabel.Text = $"Total spent:\t{total}";
         }
 
-        private void buyPriceLabel_Click(object sender, EventArgs e)
+        // Check and reformat iput content
+        void checkAndReformatEntry(RichTextBox input)
+        {
+            if (!Regex.IsMatch(input.Text, @"^[0-9]*(?:\.[0-9]*)?$"))
+            {
+                input.Text = input.Text.Replace(',', '.');
+            }
+        }
+
+        // Get crypto price from web
+        async void GetCryptoPrice()
         {
 
+            var client = new CoinMarketCapClient(API_KEY);
+            var response = await client.GetLatestQuoteAsync(new LatestQuoteParameters { Id = 1975 }, CancellationToken.None);
+
+            Console.WriteLine(response.Data);
+        }
+
+
+        //Delete an entry
+        void deleteWalletEntry(ListView walletLisView) 
+        {
+            //Delete from the view
+            /*
+            var s = walletContentListView.SelectedItems[0];
+            walletContentListView.Items.Remove(s);*/
+
+            var path = ".\\data\\" + "wallet" + ".json";
+
+            //Register whats already inside wallet file
+            var json = File.ReadAllText(path);
+            var walletContent = JsonConvert.DeserializeObject<List<WalletContent>>(json);
+
+            var toDel = $"{walletLisView.SelectedItems[0].SubItems[0].Text}--{walletLisView.SelectedItems[0].SubItems[1].Text}";
+            Console.WriteLine($"Del target {toDel}");
+            for (int i = 0; i < walletContent.Count; i++)
+            {
+                var line = $"{walletContent[i].Wallet}--{walletContent[i].Token}";
+                Console.WriteLine(line);
+
+                if (line == toDel)
+                {
+                    Console.WriteLine($"Should delete {line}");
+                    walletContent.RemoveAt(i);
+
+                }
+            }
+
+            json = JsonConvert.SerializeObject(walletContent);
+            // Write it outside the loop to avoid opening the file 2x
+            File.WriteAllText(path, json);
         }
 
         // When ValidateBuy button is clicked, all input data will be written to a file
@@ -211,32 +252,12 @@ namespace CryptoManager
 
         private void buyPriceInput_TextChanged(object sender, EventArgs e)
         {
-            if (!Regex.IsMatch(buyPriceInput.Text, @"^[0-9]*(?:\.[0-9]*)?$"))
-            {
-                //MessageBox.Show("Format: 99.99", "Please enter only numbers.");
-                //buyPriceInput.Text = buyPriceInput.Text.Remove(buyPriceInput.Text.Length - 1);
-                buyPriceInput.Text = buyPriceInput.Text.Replace(',', '.');
-            }
-        }
-
-        private void buyValueLabel_Click(object sender, EventArgs e)
-        {
-
+            checkAndReformatEntry(buyPriceInput);
         }
 
         private void buyValueInput_TextChanged(object sender, EventArgs e)
         {
-            if (!Regex.IsMatch(buyValueInput.Text, @"^[0-9]*(?:\.[0-9]*)?$"))
-            {
-                //MessageBox.Show("Format: 99.99", "Please enter only numbers.");
-                //buyValueInput.Text = buyValueInput.Text.Remove(buyValueInput.Text.Length - 1);
-                buyValueInput.Text = buyValueInput.Text.Replace(',', '.');
-            }
-        }
-
-        private void walletContentListView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            
+            checkAndReformatEntry(buyValueInput);
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
@@ -246,37 +267,7 @@ namespace CryptoManager
             {
                 if (walletContentListView.SelectedItems.Count != 0)
                 {
-                    //Delete from the view
-                    /*
-                    var s = walletContentListView.SelectedItems[0];
-                    walletContentListView.Items.Remove(s);*/
-
-                    var path = ".\\data\\" + "wallet" + ".json";
-
-                    //Register whats already inside wallet file
-                    var json = File.ReadAllText(path);
-                    var walletContent = JsonConvert.DeserializeObject<List<WalletContent>>(json);
-
-                    var toDel = $"{walletContentListView.SelectedItems[0].SubItems[0].Text}--{walletContentListView.SelectedItems[0].SubItems[1].Text}";
-                    Console.WriteLine($"Del target {toDel}");
-                    for (int i = 0; i < walletContent.Count; i++)
-                    {
-                        var line = $"{walletContent[i].Wallet}--{walletContent[i].Token}";
-                        Console.WriteLine(line);
-
-                        if (line == toDel)
-                        {
-                            Console.WriteLine($"Should delete {line}");
-                            walletContent.RemoveAt(i);
-
-                        }
-                    }
-
-                    json = JsonConvert.SerializeObject(walletContent);
-                    // Write it outside the loop to avoid opening the file 2x
-                    File.WriteAllText(path, json);
-
-
+                    deleteWalletEntry(walletContentListView);
                 }
                 else
                 {
