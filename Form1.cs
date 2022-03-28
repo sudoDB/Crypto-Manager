@@ -5,14 +5,12 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Globalization;
-using System.Net;
-using System.Web;
-using CoinMarketCap;
-using CoinMarketCap.Models.Cryptocurrency;
-using System.Threading;
+using NoobsMuc.Coinmarketcap.Client;
 
 namespace CryptoManager
 {
+
+
    
     public partial class Form1 : Form
     {
@@ -22,11 +20,102 @@ namespace CryptoManager
         public Form1()
         {
             InitializeComponent();
+
+            GetTokensList();
+
             LoadWalletListView();
 
             // Get crypto price from CoinMarketCap
             GetCryptoPrice();
+            GetTotalReturn();
         }
+
+        private void GetTotalReturn()
+        {
+
+            // Change TotalValue Label
+            string jsonStringW = File.ReadAllText(".\\data\\" + "wallet" + ".json");
+            dynamic dynJsonW = JsonConvert.DeserializeObject(jsonStringW);
+            string[] prices = File.ReadAllLines(".\\data\\" + "ValuesList" + ".txt");
+            string[] tokens = File.ReadAllLines(".\\data\\" + "TokensList" + ".txt");
+            float total = 0;
+            
+            foreach (var item in dynJsonW)
+            {
+                
+                for (int i = 0; i< tokens.Length; i++)
+                {
+                    if (item.Token == tokens[i])
+                    {
+                        total += float.Parse(item.TotalValue.ToString()) * float.Parse(prices[i]);
+                        /*
+                        Console.WriteLine(item.Token + "\t\t" + item.TotalValue.ToString() + "\t\t" + float.Parse(prices[i]));
+                        Console.WriteLine(float.Parse(item.TotalValue.ToString()) * float.Parse(prices[i]));
+                        Console.WriteLine("");*/
+                    }
+                }
+                /*
+                */
+                //string[] items = { item.Wallet, item.Token, item.TotalValue.ToString(), item.TotalPrice.ToString(), item.PricePerToken.ToString() };
+                //walletContentListView.Items.Add(new ListViewItem(items));
+                
+            }
+
+            Console.WriteLine(total);
+
+            // Temp USD -> EUR
+            total = total * 0.91f;
+
+            TotalValueLabel.Text = $"Total return:  {total.ToString("######00.00")}€";
+        }
+
+        private void GetTokensList()
+        {
+            var TokensListFile = File.ReadLines("./data/TokensList.txt");
+            foreach (var token in TokensListFile)
+            {
+                TokenTypeList.Items.Add(token);
+            }
+            
+        }
+
+        // Get crypto price from web
+        void GetCryptoPrice()
+        {
+
+            // Setup ListView
+            TokenCurrentPriceListView.View = View.Details;
+            TokenCurrentPriceListView.Columns.Add("Token Name");
+            TokenCurrentPriceListView.Columns.Add("Price");
+            // Auto-size the columns
+            for (int i = 0; i < TokenCurrentPriceListView.Columns.Count; i++)
+            {
+                TokenCurrentPriceListView.Columns[i].Width = -2;
+            }
+            // Prevent resize
+            this.TokenCurrentPriceListView.ColumnWidthChanging += new ColumnWidthChangingEventHandler(walletContentListView_ColumnWidthChanging);
+
+            // Connect to CoinMarketCap API
+            ICoinmarketcapClient client = new CoinmarketcapClient(API_KEY);
+
+            // Loop though every token to get price
+            File.Delete("./data/ValuesList.txt");
+            for (int i = 0; i < TokenTypeList.Items.Count; i++)
+            {
+                string coin = TokenTypeList.Items[i].ToString();
+                Currency currency = client.GetCurrencyBySymbol(coin);
+                //Convert price from USB to EUR
+                float v = float.Parse(currency.Price.ToString("######0.00")) * 0.91f;
+                string cPrice = v.ToString("######0.00");
+                TokenCurrentPriceListView.Items.Add(coin).SubItems.Add(cPrice);
+
+                File.AppendAllLines("./data/ValuesList.txt", new[] { cPrice });
+            }
+
+            // Sorting by wallet name
+            TokenCurrentPriceListView.Sorting = SortOrder.Ascending;
+        }
+
 
         public class WalletContent
         {
@@ -36,6 +125,7 @@ namespace CryptoManager
             public float TotalPrice { get; set; }
             public float PricePerToken { get; set; }
         }
+
 
         // Create the colums and add the content
         private void LoadWalletListView()
@@ -102,7 +192,7 @@ namespace CryptoManager
             {
                 total += float.Parse(item.TotalPrice.ToString("####0.00"));
             }
-            TotalBuyLabel.Text = $"Total spent:\t{total}";
+            TotalBuyLabel.Text = $"Total spent:  {total}€";
         }
 
         // Check and reformat iput content
@@ -114,16 +204,7 @@ namespace CryptoManager
             }
         }
 
-        // Get crypto price from web
-        async void GetCryptoPrice()
-        {
-
-            var client = new CoinMarketCapClient(API_KEY);
-            var response = await client.GetLatestQuoteAsync(new LatestQuoteParameters { Id = 1975 }, CancellationToken.None);
-
-            Console.WriteLine(response.Data);
-        }
-
+        
 
         //Delete an entry
         void deleteWalletEntry(ListView walletLisView) 
@@ -282,5 +363,6 @@ namespace CryptoManager
             RefreshWalletListView();
             RefreshLabelsContent();
         }
+
     }
 }

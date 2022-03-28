@@ -42,6 +42,8 @@
             this.modifyButton = new System.Windows.Forms.Button();
             this.editionBoxButton = new System.Windows.Forms.CheckBox();
             this.TotalBuyLabel = new System.Windows.Forms.Label();
+            this.TokenCurrentPriceListView = new System.Windows.Forms.ListView();
+            this.TotalValueLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // walletContentListView
@@ -107,22 +109,6 @@
             this.TokenTypeList.BackColor = System.Drawing.SystemColors.Window;
             this.TokenTypeList.DisplayMember = "1";
             this.TokenTypeList.FormattingEnabled = true;
-            this.TokenTypeList.Items.AddRange(new object[] {
-            "ALGO",
-            "AVAX",
-            "BTC",
-            "DOGE",
-            "ETH",
-            "GRT",
-            "ICP",
-            "LINK",
-            "LTC",
-            "MANA",
-            "MATIC",
-            "XLM",
-            "XMR",
-            "XRP",
-            "XTZ"});
             this.TokenTypeList.Location = new System.Drawing.Point(405, 35);
             this.TokenTypeList.Name = "TokenTypeList";
             this.TokenTypeList.Size = new System.Drawing.Size(113, 82);
@@ -193,17 +179,37 @@
             // TotalBuyLabel
             // 
             this.TotalBuyLabel.AutoSize = true;
-            this.TotalBuyLabel.Location = new System.Drawing.Point(405, 250);
+            this.TotalBuyLabel.Location = new System.Drawing.Point(402, 323);
             this.TotalBuyLabel.Name = "TotalBuyLabel";
             this.TotalBuyLabel.Size = new System.Drawing.Size(62, 13);
             this.TotalBuyLabel.TabIndex = 14;
             this.TotalBuyLabel.Text = "Total Spent";
+            // 
+            // TokenCurrentPriceListView
+            // 
+            this.TokenCurrentPriceListView.HideSelection = false;
+            this.TokenCurrentPriceListView.Location = new System.Drawing.Point(405, 163);
+            this.TokenCurrentPriceListView.Name = "TokenCurrentPriceListView";
+            this.TokenCurrentPriceListView.Size = new System.Drawing.Size(467, 121);
+            this.TokenCurrentPriceListView.TabIndex = 15;
+            this.TokenCurrentPriceListView.UseCompatibleStateImageBehavior = false;
+            // 
+            // TotalValueLabel
+            // 
+            this.TotalValueLabel.AutoSize = true;
+            this.TotalValueLabel.Location = new System.Drawing.Point(402, 366);
+            this.TotalValueLabel.Name = "TotalValueLabel";
+            this.TotalValueLabel.Size = new System.Drawing.Size(61, 13);
+            this.TotalValueLabel.TabIndex = 16;
+            this.TotalValueLabel.Text = "Total Value";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 461);
+            this.Controls.Add(this.TotalValueLabel);
+            this.Controls.Add(this.TokenCurrentPriceListView);
             this.Controls.Add(this.TotalBuyLabel);
             this.Controls.Add(this.editionBoxButton);
             this.Controls.Add(this.modifyButton);
@@ -241,6 +247,8 @@
         private System.Windows.Forms.Button modifyButton;
         private System.Windows.Forms.CheckBox editionBoxButton;
         private System.Windows.Forms.Label TotalBuyLabel;
+        private System.Windows.Forms.ListView TokenCurrentPriceListView;
+        private System.Windows.Forms.Label TotalValueLabel;
     }
 }
 
