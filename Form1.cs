@@ -85,6 +85,7 @@ namespace CryptoManager
 
             // Setup ListView
             TokenCurrentPriceListView.View = View.Details;
+            TokenCurrentPriceListView.Items.Clear();
             TokenCurrentPriceListView.Columns.Add("Token Name");
             TokenCurrentPriceListView.Columns.Add("Price");
             // Auto-size the columns
@@ -364,5 +365,16 @@ namespace CryptoManager
             RefreshLabelsContent();
         }
 
+        private void ReloadPriceButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GetCryptoPrice();
+            }
+            catch
+            {
+                MessageBox.Show("To many request !\nRetry in a minute..");
+            }
+        }
     }
 }

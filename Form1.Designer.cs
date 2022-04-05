@@ -44,6 +44,7 @@
             this.TotalBuyLabel = new System.Windows.Forms.Label();
             this.TokenCurrentPriceListView = new System.Windows.Forms.ListView();
             this.TotalValueLabel = new System.Windows.Forms.Label();
+            this.ReloadPriceButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // walletContentListView
@@ -203,11 +204,22 @@
             this.TotalValueLabel.TabIndex = 16;
             this.TotalValueLabel.Text = "Total Value";
             // 
+            // ReloadPriceButton
+            // 
+            this.ReloadPriceButton.Location = new System.Drawing.Point(405, 383);
+            this.ReloadPriceButton.Name = "ReloadPriceButton";
+            this.ReloadPriceButton.Size = new System.Drawing.Size(75, 23);
+            this.ReloadPriceButton.TabIndex = 17;
+            this.ReloadPriceButton.Text = "Reload price";
+            this.ReloadPriceButton.UseVisualStyleBackColor = true;
+            this.ReloadPriceButton.Click += new System.EventHandler(this.ReloadPriceButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 461);
+            this.Controls.Add(this.ReloadPriceButton);
             this.Controls.Add(this.TotalValueLabel);
             this.Controls.Add(this.TokenCurrentPriceListView);
             this.Controls.Add(this.TotalBuyLabel);
@@ -249,6 +261,7 @@
         private System.Windows.Forms.Label TotalBuyLabel;
         private System.Windows.Forms.ListView TokenCurrentPriceListView;
         private System.Windows.Forms.Label TotalValueLabel;
+        private System.Windows.Forms.Button ReloadPriceButton;
     }
 }
 
